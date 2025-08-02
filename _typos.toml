@@ -1,0 +1,14 @@
+[default.extend-words]
+
+[files]
+extend-exclude = [
+    "target/",
+    "**/*.rlib",
+    "**/*.o",
+    "**/*.d",
+    "**/*.rmeta",
+    "CHANGELOG.md",
+    "chat/chat_server/fixtures/*",
+    "chat/chat_core/fixtures/*",
+    "chat/notify_server/*.html",
+]
