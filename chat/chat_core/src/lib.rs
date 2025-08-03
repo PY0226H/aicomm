@@ -4,8 +4,30 @@ use chrono::{DateTime, Utc};
 pub use middlewares::*;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use thiserror::Error;
 pub use utils::*;
 use utoipa::ToSchema;
+
+#[allow(async_fn_in_trait)]
+pub trait Agent {
+    async fn process(&self, msg: Message, ctx: &AgentContext) -> Result<AgentDecision, AgentError>;
+}
+
+#[derive(Debug, Clone)]
+pub struct AgentContext {}
+
+#[derive(Debug, Clone)]
+pub enum AgentDecision {
+    Modify(String),
+    Reply(String),
+    Delete,
+    None,
+}
+#[derive(Error, Debug)]
+pub enum AgentError {
+    #[error("Network error: {0}")]
+    Network(String),
+}
 
 #[derive(Debug, Clone, FromRow, ToSchema, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
@@ -53,7 +75,7 @@ pub enum ChatType {
     PublicChannel,
 }
 
-#[derive(Debug, Clone, FromRow, ToSchema, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, FromRow, ToSchema, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all(serialize = "camelCase"))]
 pub struct Chat {
     pub id: i64,
@@ -62,6 +84,7 @@ pub struct Chat {
     pub name: Option<String>,
     pub r#type: ChatType,
     pub members: Vec<i64>,
+    pub agents: Vec<i64>,
     #[serde(alias = "createdAt")]
     pub created_at: DateTime<Utc>,
 }
@@ -75,6 +98,7 @@ pub struct Message {
     #[serde(alias = "senderId")]
     pub sender_id: i64,
     pub content: String,
+    pub modified_content: Option<String>,
     pub files: Vec<String>, // store file paths
     #[serde(alias = "createdAt")]
     pub created_at: DateTime<Utc>,

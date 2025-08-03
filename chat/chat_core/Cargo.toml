@@ -17,3 +17,4 @@ tower-http = { workspace = true }
 uuid = { version = "1.17.0", features = ["v7", "serde"] }
 axum-extra = { workspace = true }
 utoipa = { version = "5.4.0", features = ["axum_extras", "chrono"] }
+thiserror.workspace = true
