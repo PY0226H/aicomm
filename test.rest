@@ -152,6 +152,10 @@ Hello, World!
 GET http://localhost:6688/api/files/1/9ad/197/bec5f1f4d66999cf43d2f493d5dc3c5c06.png
 Authorization: Bearer {{token}}
 
+
+### get files with token
+GET http://localhost:6688/api/files/1/9ad/197/bec5f1f4d66999cf43d2f493d5dc3c5c06.png?token={{token}}
+
 ### ========================================
 ### 消息管理测试
 ### ========================================
