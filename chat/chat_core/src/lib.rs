@@ -7,6 +7,8 @@ use sqlx::FromRow;
 use thiserror::Error;
 pub use utils::*;
 use utoipa::ToSchema;
+use serde_json::Value;
+
 
 #[allow(async_fn_in_trait)]
 pub trait Agent {
@@ -27,6 +29,31 @@ pub enum AgentDecision {
 pub enum AgentError {
     #[error("Network error: {0}")]
     Network(String),
+}
+
+#[derive(Debug, Clone, ToSchema, Serialize, Deserialize, PartialEq, PartialOrd, sqlx::Type)]
+#[sqlx(type_name = "agent_type", rename_all = "snake_case")]
+#[serde(rename_all(serialize = "camelCase"))]
+pub enum AgentType {
+    #[serde(alias = "proxy", alias = "Proxy")]
+    Proxy,
+    #[serde(alias = "reply", alias = "Reply")]
+    Reply,
+    #[serde(alias = "tap", alias = "Tap")]
+    Tap,
+}
+
+#[derive(Debug, Clone, FromRow, ToSchema, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all(serialize = "camelCase"))]
+pub struct ChatAgent {
+    pub id: i64,
+    pub chat_id: i64,
+    pub name: String,
+    pub r#type: AgentType,
+    pub prompt: String,
+    pub args: Value, //args: sqlx::types::Json<Value>, // TODO: change to custom type
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, FromRow, ToSchema, Serialize, Deserialize, PartialEq)]
