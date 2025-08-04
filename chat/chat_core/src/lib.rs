@@ -3,12 +3,11 @@ mod utils;
 use chrono::{DateTime, Utc};
 pub use middlewares::*;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use sqlx::FromRow;
 use thiserror::Error;
 pub use utils::*;
 use utoipa::ToSchema;
-use serde_json::Value;
-
 
 #[allow(async_fn_in_trait)]
 pub trait Agent {

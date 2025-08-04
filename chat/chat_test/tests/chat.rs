@@ -103,7 +103,7 @@ impl ChatServer {
     async fn signin(&self) -> Result<String> {
         let res = self
             .client
-            .post(&format!("http://{}/api/signin", self.addr))
+            .post(format!("http://{}/api/signin", self.addr))
             .header("Content-Type", "application/json")
             .body(r#"{"email": "tchen@acme.org", "password": "12345678"}"#)
             .send()
@@ -116,7 +116,7 @@ impl ChatServer {
     async fn create_chat(&self) -> Result<Chat> {
         let res = self
             .client
-            .post(&format!("http://{}/api/chats", self.addr))
+            .post(format!("http://{}/api/chats", self.addr))
             .header("Authorization", format!("Bearer {}", self.token))
             .header("Content-Type", "application/json")
             .body(r#"{"name": "test", "members": [1,2], "public": false}"#)
@@ -138,7 +138,7 @@ impl ChatServer {
 
         let res = self
             .client
-            .post(&format!("http://{}/api/upload", self.addr))
+            .post(format!("http://{}/api/upload", self.addr))
             .header("Authorization", format!("Bearer {}", self.token))
             .multipart(form)
             .send()
@@ -152,7 +152,7 @@ impl ChatServer {
         }))?;
         let res = self
             .client
-            .post(&format!("http://{}/api/chats/{}", self.addr, chat_id))
+            .post(format!("http://{}/api/chats/{}", self.addr, chat_id))
             .header("Authorization", format!("Bearer {}", self.token))
             .header("Content-Type", "application/json")
             .body(body)
