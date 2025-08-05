@@ -39,6 +39,15 @@ pub enum AppError {
 
     #[error("create message error: {0}")]
     CreateMessageError(String),
+
+    #[error("create agent error: {0}")]
+    CreateAgentError(String),
+
+    #[error("update agent error: {0}")]
+    UpdateAgentError(String),
+
+    #[error("user {user_id} is not member of chat {chat_id}")]
+    NotChatMemberError { user_id: u64, chat_id: u64 },
 }
 
 impl ErrorOutput {
@@ -62,6 +71,9 @@ impl IntoResponse for AppError {
             AppError::IoError(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR,
             AppError::CreateMessageError(_) => axum::http::StatusCode::BAD_REQUEST,
             AppError::ChatFileError(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::CreateAgentError(_) => axum::http::StatusCode::BAD_REQUEST,
+            AppError::UpdateAgentError(_) => axum::http::StatusCode::BAD_REQUEST,
+            AppError::NotChatMemberError { .. } => axum::http::StatusCode::FORBIDDEN,
         };
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()
     }

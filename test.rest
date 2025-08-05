@@ -173,3 +173,31 @@ Authorization: Bearer {{token}}
 ### 获取消息列表 (分页)
 GET http://localhost:6688/api/chats/1/messages?limit=6&last_id=5
 Authorization: Bearer {{token}}
+
+### list chat agents
+GET http://localhost:6688/api/chats/1/agents
+Authorization: Bearer {{token}}
+
+### create chat agent
+
+POST http://localhost:6688/api/chats/1/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "agent5",
+    "type": "proxy",
+    "prompt": "You are a helpful assistant"
+}
+
+### update chat agent
+
+PATCH http://localhost:6688/api/chats/1/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "id": 7,
+    "prompt": "You are a helpful assistant",
+    "args": {}
+}

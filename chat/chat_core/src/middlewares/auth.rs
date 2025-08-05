@@ -11,7 +11,7 @@ use axum_extra::{
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
-use crate::TokenVerify;
+use super::TokenVerify;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Params {

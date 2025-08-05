@@ -3,7 +3,8 @@ mod utils;
 use chrono::{DateTime, Utc};
 pub use middlewares::*;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+#[allow(unused_imports)]
+use serde_json::json;
 use sqlx::FromRow;
 use thiserror::Error;
 pub use utils::*;
@@ -30,11 +31,14 @@ pub enum AgentError {
     Network(String),
 }
 
-#[derive(Debug, Clone, ToSchema, Serialize, Deserialize, PartialEq, PartialOrd, sqlx::Type)]
+#[derive(
+    Debug, Clone, Default, ToSchema, Serialize, Deserialize, PartialEq, PartialOrd, sqlx::Type,
+)]
 #[sqlx(type_name = "agent_type", rename_all = "snake_case")]
 #[serde(rename_all(serialize = "camelCase"))]
 pub enum AgentType {
     #[serde(alias = "proxy", alias = "Proxy")]
+    #[default]
     Proxy,
     #[serde(alias = "reply", alias = "Reply")]
     Reply,
@@ -46,12 +50,16 @@ pub enum AgentType {
 #[serde(rename_all(serialize = "camelCase"))]
 pub struct ChatAgent {
     pub id: i64,
+    #[serde(alias = "chatId")]
     pub chat_id: i64,
     pub name: String,
     pub r#type: AgentType,
     pub prompt: String,
-    pub args: Value, //args: sqlx::types::Json<Value>, // TODO: change to custom type
+    #[schema(value_type = Object, example = json!({"key": "value"}))]
+    pub args: sqlx::types::Json<serde_json::Value>, // TODO: change to custom type
+    #[serde(alias = "createdAt")]
     pub created_at: DateTime<Utc>,
+    #[serde(alias = "updatedAt")]
     pub updated_at: DateTime<Utc>,
 }
 
@@ -87,11 +95,14 @@ pub struct Workspace {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, PartialEq, PartialOrd, sqlx::Type)]
+#[derive(
+    Debug, Clone, Default, Serialize, Deserialize, ToSchema, PartialEq, PartialOrd, sqlx::Type,
+)]
 #[sqlx(type_name = "chat_type", rename_all = "snake_case")]
 #[serde(rename_all(serialize = "camelCase"))]
 pub enum ChatType {
     #[serde(alias = "single", alias = "Single")]
+    #[default]
     Single,
     #[serde(alias = "group", alias = "Group")]
     Group,

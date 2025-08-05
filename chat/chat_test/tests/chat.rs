@@ -1,6 +1,9 @@
-use chat_core::{Chat, ChatType, Message};
+use chat_core::{Chat, ChatAgent, ChatType, Message};
 use futures::StreamExt;
-use reqwest::multipart::{Form, Part};
+use reqwest::{
+    StatusCode,
+    multipart::{Form, Part},
+};
 use reqwest_eventsource::{Event, EventSource};
 use serde::Deserialize;
 use serde_json::json;
@@ -29,8 +32,9 @@ async fn chat_server_should_work() -> Result<()> {
     let chat_server = ChatServer::new(state).await?;
     let db_url = tdb.url();
     NotifyServer::new(&db_url, &chat_server.token).await?;
-    let _chat = chat_server.create_chat().await?;
-    let _message = chat_server.create_message(_chat.id as u64).await?;
+    let chat = chat_server.create_chat().await?;
+    let _agent = chat_server.create_agent(chat.id as u64).await?;
+    let _message = chat_server.create_message(chat.id as u64).await?;
     sleep(Duration::from_secs(1)).await; // wait for notification to be sent
 
     Ok(())
@@ -126,6 +130,20 @@ impl ChatServer {
         let chat: Chat = res.json().await?;
         assert_eq!(chat.name.as_ref().unwrap(), "test");
         Ok(chat)
+    }
+    async fn create_agent(&self, chat_id: u64) -> Result<ChatAgent> {
+        let res = self
+            .client
+            .post(format!("http://{}/api/chats/{}/agents", self.addr, chat_id))
+            .header("Authorization", format!("Bearer {}", self.token))
+            .header("Content-Type", "application/json")
+            .body(
+                r#"{"name": "test agent", "type": "proxy", "prompt": "You are a helpful agent"}"#,
+            );
+        let res = res.send().await?;
+        assert_eq!(res.status(), StatusCode::CREATED);
+        let agent: ChatAgent = res.json().await?;
+        Ok(agent)
     }
 
     async fn create_message(&self, chat_id: u64) -> Result<Message> {
