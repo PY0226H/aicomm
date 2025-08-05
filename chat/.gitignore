@@ -4,3 +4,11 @@
 /chat_server/target
 /chat_core/target
 /notify_server/target
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
