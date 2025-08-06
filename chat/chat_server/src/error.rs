@@ -1,4 +1,5 @@
 use axum::{Json, response::IntoResponse};
+use chat_core::AgentError;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use utoipa::ToSchema;
@@ -48,6 +49,9 @@ pub enum AppError {
 
     #[error("user {user_id} is not member of chat {chat_id}")]
     NotChatMemberError { user_id: u64, chat_id: u64 },
+
+    #[error("ai agent error: {0}")]
+    AiAgentError(#[from] AgentError),
 }
 
 impl ErrorOutput {
@@ -74,6 +78,7 @@ impl IntoResponse for AppError {
             AppError::CreateAgentError(_) => axum::http::StatusCode::BAD_REQUEST,
             AppError::UpdateAgentError(_) => axum::http::StatusCode::BAD_REQUEST,
             AppError::NotChatMemberError { .. } => axum::http::StatusCode::FORBIDDEN,
+            AppError::AiAgentError(_) => axum::http::StatusCode::INTERNAL_SERVER_ERROR,
         };
         (status, Json(ErrorOutput::new(self.to_string()))).into_response()
     }

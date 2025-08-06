@@ -1,5 +1,5 @@
 use crate::{AppError, AppState};
-use chat_core::{AgentType, ChatAgent};
+use chat_core::{AdapterType, AgentType, ChatAgent};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 use utoipa::ToSchema;
@@ -9,6 +9,8 @@ use utoipa::ToSchema;
 pub struct CreateAgent {
     pub name: String,
     pub r#type: AgentType,
+    pub adapter: AdapterType,
+    pub model: String,
     pub prompt: String,
     #[serde(default = "default_map")]
     pub args: serde_json::Value,
@@ -32,12 +34,16 @@ impl CreateAgent {
     pub fn new(
         name: impl Into<String>,
         r#type: AgentType,
+        adapter: AdapterType,
+        model: impl Into<String>,
         prompt: impl Into<String>,
         args: impl Serialize,
     ) -> Self {
         Self {
             name: name.into(),
             r#type,
+            adapter,
+            model: model.into(),
             prompt: prompt.into(),
             args: serde_json::to_value(args).unwrap(),
         }
@@ -71,16 +77,19 @@ impl AppState {
             )));
         }
 
+        //TODO: check if adapter and model are valid for the agent type
         let agent = sqlx::query_as(
             r#"
-            INSERT INTO chat_agents (chat_id, name, type, prompt, args)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO chat_agents (chat_id, name, type, adapter, model, prompt, args)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
             "#,
         )
         .bind(chat_id as i64)
         .bind(input.name)
         .bind(input.r#type)
+        .bind(input.adapter)
+        .bind(input.model)
         .bind(input.prompt)
         .bind(input.args)
         .fetch_one(&self.pool)
@@ -196,6 +205,8 @@ mod tests {
         let input = CreateAgent::new(
             "test",
             AgentType::Proxy,
+            AdapterType::Openai,
+            "gpt-4o-mini",
             "You are a helpful assistant",
             HashMap::<String, String>::new(),
         );
@@ -206,6 +217,8 @@ mod tests {
 
         assert_eq!(agent.name, "test");
         assert_eq!(agent.r#type, AgentType::Proxy);
+        assert_eq!(agent.adapter, AdapterType::Openai);
+        assert_eq!(agent.model, "gpt-4o-mini");
         assert_eq!(agent.prompt, "You are a helpful assistant");
         assert_eq!(agent.args, sqlx::types::Json(serde_json::json!({})));
         Ok(())
@@ -233,6 +246,8 @@ mod tests {
         let input = CreateAgent::new(
             "test",
             AgentType::Proxy,
+            AdapterType::Openai,
+            "gpt-4o-mini",
             "You are a helpful assistant",
             HashMap::<String, String>::new(),
         );

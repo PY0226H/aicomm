@@ -27,6 +27,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ai-sdk"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "reqwest",
+ "serde",
+ "tokio",
+]
+
+[[package]]
 name = "alloc-no-stdlib"
 version = "2.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -380,6 +390,7 @@ dependencies = [
 name = "chat-server"
 version = "0.1.0"
 dependencies = [
+ "ai-sdk",
  "anyhow",
  "argon2",
  "axum",

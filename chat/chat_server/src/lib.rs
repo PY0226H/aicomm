@@ -1,3 +1,4 @@
+mod agent;
 mod config;
 mod error;
 mod handlers;
@@ -18,6 +19,7 @@ use tokio::fs;
 use tower_http::cors::{Any, CorsLayer};
 
 use crate::{middlewares::verify_chat, openapi::OpenApiRouter};
+pub use agent::*;
 pub use config::AppConfig;
 pub use error::{AppError, ErrorOutput};
 use handlers::*;

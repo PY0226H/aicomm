@@ -18,6 +18,7 @@ sqlx = { version = "0.8.6", features = [
     "tls-rustls",
 ] }
 chat-core = { path = "./chat_core"}
+ai-sdk = { path = "./ai_sdk"}
 chat-server = { path = "./chat_server"}
 notify-server = { path = "./notify_server"}
 this = "0.3.0"

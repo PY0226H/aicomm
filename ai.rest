@@ -5,7 +5,7 @@ Authorization: Bearer {{$processEnv OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-    "model": "gpt-4.1",
+    "model": "gpt-4o-mini",
     "messages": [
         {
             "role": "system",
