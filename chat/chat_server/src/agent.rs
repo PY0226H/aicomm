@@ -8,6 +8,7 @@ pub enum AgentVariant {
     Proxy(ProxyAgent),
     Reply(ReplyAgent),
     Tap(TapAgent),
+    Test(TestAgent),
 }
 
 #[allow(unused)]
@@ -32,6 +33,15 @@ pub struct TapAgent {
     pub adapter: AiAdapter,
     pub prompt: String,
     pub args: serde_json::Value,
+}
+
+#[allow(unused)]
+pub struct TestAgent;
+
+impl Agent for TestAgent {
+    async fn process(&self, _msg: &str, _ctx: &AgentContext) -> Result<AgentDecision, AgentError> {
+        Ok(AgentDecision::None)
+    }
 }
 
 impl Agent for ProxyAgent {
@@ -66,6 +76,7 @@ impl Agent for AgentVariant {
             AgentVariant::Reply(agent) => agent.process(msg, ctx).await,
             AgentVariant::Proxy(agent) => agent.process(msg, ctx).await,
             AgentVariant::Tap(agent) => agent.process(msg, ctx).await,
+            AgentVariant::Test(agent) => agent.process(msg, ctx).await,
         }
     }
 }
@@ -78,6 +89,7 @@ impl From<ChatAgent> for AgentVariant {
                 OpenaiAdapter::new(api_key, agent.model).into()
             }
             AdapterType::Ollama => OllamaAdapter::new_local(agent.model).into(),
+            AdapterType::Test => return AgentVariant::Test(TestAgent),
         };
 
         match agent.r#type {
