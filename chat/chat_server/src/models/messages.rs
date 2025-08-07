@@ -150,7 +150,7 @@ mod tests {
     use anyhow::Result;
 
     #[tokio::test]
-    //#[ignore] // Ignore this test if you don't have a test database set up
+    #[ignore] // Ignore this test if you don't have a test database set up
     async fn create_message_should_work() -> Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
         let input = CreateMessage {
