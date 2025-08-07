@@ -131,7 +131,7 @@ mod tests {
     use crate::Role;
     use std::env;
 
-    //#[ignore]
+    #[ignore]
     #[tokio::test]
     async fn openai_complete_should_work() {
         let api_key = env::var("OPENAI_API_KEY").unwrap();

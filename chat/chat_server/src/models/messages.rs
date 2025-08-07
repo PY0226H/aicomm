@@ -104,7 +104,7 @@ impl AppState {
                 "#,
             )
             .bind(chat_id as i64)
-            .bind(other_user_id as i64)
+            .bind(other_user_id)
             .bind(reply)
             .execute(&self.pool)
             .await?;
@@ -150,68 +150,75 @@ mod tests {
     use anyhow::Result;
 
     #[tokio::test]
-    #[ignore] // Ignore this test if you don't have a test database set up
-    async fn create_message_should_work() -> Result<(), AppError> {
+    //#[ignore] // Ignore this test if you don't have a test database set up
+    async fn create_message_should_work() -> Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
         let input = CreateMessage {
-            content: "Hello, world!".to_string(),
+            content: "hello".to_string(),
             files: vec![],
-        };
-        let chat_id = 1; // Assuming chat_id 1 exists
-        let user_id = 1; // Assuming user_id 1 exists
-
-        let message = state.create_message(input, chat_id, user_id).await?;
-        assert_eq!(message.content, "Hello, world!");
-
-        //invalid files should fail
-        let input = CreateMessage {
-            content: "This is a test message".to_string(),
-            files: vec!["/files/1/abc123.txt".to_string()], // Assuming this file does not exist
-        };
-        let result = state.create_message(input, chat_id, user_id).await;
-        assert!(result.is_err());
-
-        //valid files should work
-        let url = upload_dummy_file(&state)?;
-        let input = CreateMessage {
-            content: "This is a test message".to_string(),
-            files: vec![url],
         };
         let message = state
             .create_message(input, 1, 1)
             .await
             .expect("create message failed");
-        assert_eq!(message.content, "This is a test message");
+        assert_eq!(message.content, "hello");
+
+        // invalid files should fail
+        let input = CreateMessage {
+            content: "hello".to_string(),
+            files: vec!["1".to_string()],
+        };
+
+        let err = state.create_message(input, 1, 1).await.unwrap_err();
+        assert_eq!(err.to_string(), "chat file error: Invalid file path");
+
+        // valid files should work
+        let url = upload_dummy_file(&state)?;
+        let input = CreateMessage {
+            content: "hello".to_string(),
+            files: vec![url],
+        };
+
+        let message = state
+            .create_message(input, 1, 1)
+            .await
+            .expect("create message failed");
+        assert_eq!(message.content, "hello");
         assert_eq!(message.files.len(), 1);
 
         Ok(())
     }
 
     #[tokio::test]
-    async fn list_messages_should_work() -> Result<(), AppError> {
+    async fn list_messages_should_work() -> Result<()> {
         let (_tdb, state) = AppState::new_for_test().await?;
         let input = ListMessages {
             last_id: None,
             limit: 6,
         };
+
         let messages = state.list_messages(input, 1).await?;
         assert_eq!(messages.len(), 6);
 
-        let last_id = messages.last().expect("last message should exist").id;
+        let last_id = messages.last().expect("last message should exists").id;
+
         let input = ListMessages {
             last_id: Some(last_id as _),
             limit: 6,
         };
+
         let messages = state.list_messages(input, 1).await?;
-        assert_eq!(messages.len(), 4); // No more messages after the last one
+        assert_eq!(messages.len(), 4);
+
         Ok(())
     }
 
     fn upload_dummy_file(state: &AppState) -> Result<String> {
         let file = ChatFile::new(1, "test.txt", b"hello world");
         let path = file.path(&state.config.server.base_dir);
-        std::fs::create_dir_all(path.parent().expect("Failed to create parent directory"))?;
+        std::fs::create_dir_all(path.parent().expect("file path parent should exists"))?;
         std::fs::write(&path, b"hello world")?;
+
         Ok(file.url())
     }
 }
