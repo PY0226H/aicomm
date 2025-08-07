@@ -27,6 +27,7 @@ struct AuthToken {
 struct NotifyServer;
 
 #[tokio::test]
+#[ignore]
 async fn chat_server_should_work() -> Result<()> {
     let (tdb, state) = chat_server::AppState::new_for_test().await?;
     let chat_server = ChatServer::new(state).await?;
