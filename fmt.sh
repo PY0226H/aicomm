@@ -2,7 +2,7 @@
 
 echo "🚀 开始格式化 Rust 代码..."
 
-for dir in chat chatapp/src-tauri; do
+for dir in chat swiftide-pgvector chatapp/src-tauri; do
     if [ -d "$dir" ]; then
         echo "📁 格式化 $dir 目录..."
         (cd "$dir" && cargo fmt --all)

@@ -56,6 +56,9 @@ impl Agent for ProxyAgent {
 
 impl Agent for ReplyAgent {
     async fn process(&self, msg: &str, _ctx: &AgentContext) -> Result<AgentDecision, AgentError> {
+        // 1. create embedding for the message
+        // 2. search related docs via vector db with embedding
+        // 3. query llm with prompt and related docs as context
         let prompt = format!("{} {}", self.prompt, msg);
         let messages = vec![ai_sdk::Message::user(prompt)];
         let res = self.adapter.complete(&messages).await?;
@@ -66,7 +69,7 @@ impl Agent for ReplyAgent {
 // in future, we should push messages into a queue and process in a delayed manner
 impl Agent for TapAgent {
     async fn process(&self, _msg: &str, _ctx: &AgentContext) -> Result<AgentDecision, AgentError> {
-        Ok(AgentDecision::None)
+        Ok(AgentDecision::Modify("test".to_string()))
     }
 }
 

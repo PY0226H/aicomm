@@ -1,0 +1,29 @@
+[package]
+name = "swiftide-pgvector"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+documentation = "https://docs.rs/swiftide-pgvector"
+repository = "https://github.com/PY0226H/aicomm"
+homepage = "https://github.com/PY0226H/aicomm"
+description = "A library to use pgvector with Swiftide."
+
+readme = "README.md"
+categories = ["development-tools"]
+keywords = ["pgvector", "postgres", "database"]
+
+[dependencies]
+anyhow = "1.0.98"
+async-trait = "0.1.88"
+derive_builder = "0.20.2"
+pgvector = { version = "0.4.1", features = ["sqlx"] }
+serde_json = "1.0.142"
+sqlx = { version = "0.8.6", features = ["postgres", "uuid"] }
+swiftide-core = "0.29.0"
+tracing = "0.1.41"
+
+[dev-dependencies]
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio", "tls-rustls"] }
+swiftide = { version = "0.29.0", features = ["fastembed", "ollama", "tree-sitter", "openai"] }
+tokio = { version = "1.47.1", features = ["rt", "rt-multi-thread", "macros"] }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
