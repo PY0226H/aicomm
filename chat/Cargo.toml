@@ -1,5 +1,5 @@
 [workspace]
-members = ["chat_server", "chat_core", "notify_server", "chat_test"]
+members = ["chat_server", "chat_core", "notify_server", "chat_test", "bot_server"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -29,3 +29,4 @@ tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 jwt-simple = { version = "0.12.12", default-features = false, features = ["pure-rust"] }
 tower = "0.5.2"
 tower-http = { version = "0.6.6", features = ["compression-full", "fs", "cors", "trace"] }
+swiftide-pgvector = { path = "../swiftide-pgvector" }

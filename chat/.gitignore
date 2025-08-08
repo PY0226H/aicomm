@@ -12,3 +12,5 @@
 # Logs
 *.log
 logs/
+
+.fastembed*

@@ -14,7 +14,7 @@ error = {workspace = true}
 futures = "0.3.31"
 jwt-simple.workspace = true
 serde = {workspace = true}
-serde_json = "1.0.141"
+serde_json = {workspace = true}
 serde_yaml = {workspace = true}
 sqlx = {workspace = true}
 this = {workspace = true}

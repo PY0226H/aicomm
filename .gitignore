@@ -56,3 +56,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+# Embedding cache
+.fastembed*
