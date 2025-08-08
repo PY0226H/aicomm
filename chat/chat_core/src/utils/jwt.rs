@@ -2,7 +2,7 @@ use jwt_simple::prelude::*;
 
 use crate::User;
 
-const JWT_DURATION: u64 = 60 * 60 * 24 * 7;
+const JWT_DURATION: u64 = 60 * 60 * 24 * 7; //1 week
 const JWT_ISS: &str = "chat_server";
 const JWT_AUD: &str = "chat_web";
 
@@ -25,10 +25,16 @@ impl DecodingKey {
     pub fn load(pem: &str) -> Result<Self, jwt_simple::Error> {
         Ok(Self(Ed25519PublicKey::from_pem(pem)?))
     }
+    #[allow(unused)]
     pub fn verify(&self, token: &str) -> Result<User, jwt_simple::Error> {
-        let mut opts = VerificationOptions::default();
-        opts.allowed_issuers = Some(HashSet::from_strings(&[JWT_ISS]));
-        opts.allowed_audiences = Some(HashSet::from_strings(&[JWT_AUD]));
+        let opts = VerificationOptions {
+            allowed_issuers: Some(HashSet::from_strings(&[JWT_ISS])),
+            allowed_audiences: Some(HashSet::from_strings(&[JWT_AUD])),
+            // use default time tolerance which is 15 minutes
+            // time_tolerance: Some(Duration::from_secs(10)),
+            ..Default::default()
+        };
+
         let claims = self.0.verify_token::<User>(token, Some(opts))?;
         Ok(claims.custom)
     }
