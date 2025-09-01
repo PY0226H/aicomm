@@ -140,7 +140,7 @@ Content-Type: multipart/form-data; boundary=MyBoundary
 Content-Disposition: form-data; filename="letter.png"
 Content-Type: application/octet-stream
 
-< /Users/panyihang/snapshots/letter.png
+< ./fixtures/letter.png
 --MyBoundary
 Content-Disposition: form-data; filename="hello.txt"
 Content-Type: text/plain
@@ -247,3 +247,14 @@ Authorization: Bearer {{token}}
     "members": [1, 4],
     "public": false
 }
+
+
+### send an event
+
+curl -X POST http://localhost:6690/api/event \
+  -H "Content-Type: application/protobuf" \
+  -H "Authorization: Bearer {{token}}" \
+  -H "X-Country: China" \
+  -H "X-Region: Shanghai" \
+  -H "X-City: Shanghai" \
+  --data-binary @./fixtures/event.bin

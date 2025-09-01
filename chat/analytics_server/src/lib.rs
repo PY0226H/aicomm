@@ -2,10 +2,12 @@ mod config;
 mod error;
 mod events;
 mod extractors;
-mod handler;
+mod handlers;
 mod openapi;
 
 pub mod pb;
+
+pub use events::*;
 
 pub use anyhow::Context;
 use chat_core::{
@@ -15,7 +17,7 @@ use chat_core::{
 use clickhouse::Client;
 pub use config::*;
 pub use error::*;
-use handler::create_event_handler;
+use handlers::create_event_handler;
 use openapi::OpenApiRouter as _;
 use std::{fmt, ops::Deref, sync::Arc};
 use tokio::fs;

@@ -1,5 +1,5 @@
 [package]
-name = "analytic-server"
+name = "analytics-server"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
@@ -15,6 +15,7 @@ futures-util = { version = "0.3.31", default-features = false }
 prost = "0.14.1"
 prost-types = "0.14.1"
 serde.workspace = true
+serde_json.workspace = true
 serde_yaml.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
@@ -33,3 +34,4 @@ proto-builder-trait = { version = "0.6.2", features = ["prost"], default-feature
 
 [dev-dependencies]
 clickhouse = { version = "0.13.3", features = ["rustls-tls", "time", "test-util"] }
+reqwest = { version = "0.12.23", default-features = false, features = ["rustls-tls", "json"] }

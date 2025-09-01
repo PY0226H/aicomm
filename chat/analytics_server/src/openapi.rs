@@ -1,4 +1,4 @@
-use crate::{AppState, ErrorOutput, handler::*};
+use crate::{AppState, ErrorOutput, handlers::*};
 use axum::Router;
 use utoipa::{
     Modify, OpenApi,

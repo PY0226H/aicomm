@@ -1,4 +1,4 @@
-use analytic_server::{AppConfig, AppState, get_router};
+use analytics_server::{AppConfig, AppState, get_router};
 use anyhow::Result;
 use tokio::net::TcpListener;
 use tracing::{info, level_filters::LevelFilter};
