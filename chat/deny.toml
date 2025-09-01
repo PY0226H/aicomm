@@ -61,6 +61,7 @@ allow = [
     "Apache-2.0 WITH LLVM-exception",
     "MPL-2.0",
     "NCSA",
+    "OpenSSL",
 
 ]
 confidence-threshold = 0.8
