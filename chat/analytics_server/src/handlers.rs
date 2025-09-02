@@ -30,9 +30,10 @@ pub(crate) async fn create_event_handler(
     Geo(geo): Geo,
     Protobuf(event): Protobuf<AnalyticsEvent>,
 ) -> Result<impl IntoResponse, AppError> {
+    info!("received event: {:?}", event);
     let mut row = AnalyticsEventRow::try_from(event)?;
 
-    // get user info from extension
+    // get user info from extensions
     if let Some(user) = parts.extensions.get::<User>() {
         row.user_id = Some(user.id.to_string());
     } else {
